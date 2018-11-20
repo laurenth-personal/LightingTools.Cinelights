@@ -1,0 +1,19 @@
+{
+    "name": "LightingTools.Cinelights.Editor",
+    "references": [
+        "LightingTools.Core",
+        "LightingTools.Core.Editor",
+        "LightingTools.Cinelights",
+        "Unity.RenderPipelines.HighDefinition.Runtime"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

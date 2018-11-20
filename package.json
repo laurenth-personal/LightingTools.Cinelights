@@ -1,0 +1,10 @@
+{
+    "name": "li.lightingtools.cinelights",
+    "displayName": "Lighting Tools Cinelights",
+    "version": "0.0.1",
+    "unity": "2018.3",
+    "description": "Lighting tools Cine Lights.",
+    "dependencies": { 
+    	"li.lightingtools.core": "0.0.1"
+	}
+}
