@@ -17,16 +17,19 @@ public class CineLight : MonoBehaviour
     public float Roll = 0f;
     public Vector3 offset;
     public float distance = 2.0f;
-    [SerializeField][HideInInspector]
+    [SerializeField]
+    [HideInInspector]
     public GameObject lightGO;
-    [SerializeField][HideInInspector]
+    [SerializeField]
+    [HideInInspector]
     public GameObject LightParentPitch;
-    [SerializeField][HideInInspector]
+    [SerializeField]
+    [HideInInspector]
     public GameObject LightParentYaw;
 
     [SerializeField]
     public bool useShadowCaster;
-    public Vector2 shadowsCasterSize = new Vector2(1,1);
+    public Vector2 shadowsCasterSize = new Vector2(1, 1);
     public float shadowsCasterDistance = 1;
     public Vector2 shadowsCasterOffset;
     [SerializeField]
@@ -45,7 +48,7 @@ public class CineLight : MonoBehaviour
         if (LightParentYaw == null || LightParentYaw.transform.parent != gameObject.transform) { CreateLightParentYaw(); }
         if (LightParentPitch == null || LightParentPitch.transform.parent != LightParentYaw.transform) { CreateLightParentPitch(); }
         if (lightGO == null || lightGO.transform.parent != LightParentPitch.transform) { CreateLight(); }
-        if(useShadowCaster && gameObject.GetComponentInChildren<MeshRenderer>() == null) { CreateShadowCaster(shadowsCasterSize, shadowsCasterDistance); }
+        if (useShadowCaster && gameObject.GetComponentInChildren<MeshRenderer>() == null) { CreateShadowCaster(shadowsCasterSize, shadowsCasterDistance); }
         //Enable if it has been disabled
         if (lightGO != null)
             lightGO.GetComponent<Light>().enabled = true;
@@ -53,7 +56,7 @@ public class CineLight : MonoBehaviour
             shadowCasterGO.GetComponent<MeshRenderer>().enabled = true;
     }
 
-    public void SetAttachmentTransform(GameObject attachmentTransform,bool attach)
+    public void SetAttachmentTransform(GameObject attachmentTransform, bool attach)
     {
         m_attachmentTransform = attachmentTransform;
         m_attach = attach;
@@ -94,9 +97,10 @@ public class CineLight : MonoBehaviour
         targetedLightSpot.type = LightType.Spot;
         SetLightRotation();
         lightGO.transform.localPosition = new Vector3(0, 0, distance);
-		//HDRP
-		lightGO.AddComponent<HDAdditionalLightData>();
-		lightGO.AddComponent<AdditionalShadowData> ();
+        //HDRP
+        lightGO.AddComponent<HDAdditionalLightData>();
+        var shadowData = lightGO.AddComponent<AdditionalShadowData>();
+        shadowData.edgeLeakFixup = true;
     }
 
     public void ApplyShadowCaster()
@@ -115,7 +119,7 @@ public class CineLight : MonoBehaviour
     {
         shadowCasterGO = GameObject.CreatePrimitive(PrimitiveType.Quad);
         shadowCasterGO.transform.parent = lightGO.transform;
-        shadowCasterGO.transform.localPosition = new Vector3(0,0,-distance);
+        shadowCasterGO.transform.localPosition = new Vector3(0, 0, -distance);
         shadowCasterGO.transform.localRotation = Quaternion.identity;
         shadowCasterGO.transform.localScale = new Vector3(size.x, size.y, 0);
         DestroyImmediate(shadowCasterGO.GetComponent<MeshCollider>());
@@ -123,9 +127,9 @@ public class CineLight : MonoBehaviour
 
     void SetLightParentTransform()
     {
-		if (LightParentPitch != null && LightParentYaw!=null )
+        if (LightParentPitch != null && LightParentYaw != null)
         {
-			if ( linkToCameraRotation)
+            if (linkToCameraRotation)
             {
                 var cameraRotation = FindObjectOfType<Camera>().transform.rotation;
                 gameObject.transform.rotation = cameraRotation;

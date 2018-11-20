@@ -3,10 +3,12 @@ using UnityEngine.Playables;
 using System.Collections.Generic;
 using LightUtilities;
 
-public class CineLightMixer : PlayableBehaviour {
+public class CineLightMixer : PlayableBehaviour
+{
 
     // Called each frame the mixer is active, after inputs are processed
-    [HideInInspector][SerializeField]
+    [HideInInspector]
+    [SerializeField]
     public GameObject lightTargetGO;
     public Transform lightTransform;
     public Transform lightPitchTransform;
@@ -47,7 +49,8 @@ public class CineLightMixer : PlayableBehaviour {
         base.OnGraphStop(playable);
     }
 
-    public override void ProcessFrame(Playable handle, FrameData info, object playerData) {
+    public override void ProcessFrame(Playable handle, FrameData info, object playerData)
+    {
         var count = handle.GetInputCount();
 
         var cineLight = lightTargetGO.GetComponent<CineLight>();
@@ -93,14 +96,14 @@ public class CineLightMixer : PlayableBehaviour {
                     if (weight > 0)
                     {
                         inputWeights.Add(weight);
-                        if(inputWeights.Count == 1)
+                        if (inputWeights.Count == 1)
                         {
                             fromCineLightParameters = CineLightParameters.DeepCopy(data.cinelightParameters);
                             fromLightParameters = LightParameters.DeepCopy(data.lightParameters);
                             fromShadowCasterParameters = ShadowCasterParameters.DeepCopy(data.shadowCasterParameters);
                             fadeWeight = weight;
                         }
-                        if(inputWeights.Count == 2)
+                        if (inputWeights.Count == 2)
                         {
                             toCineLightParameters = CineLightParameters.DeepCopy(data.cinelightParameters);
                             toLightParameters = LightParameters.DeepCopy(data.lightParameters);
@@ -114,6 +117,12 @@ public class CineLightMixer : PlayableBehaviour {
                         break;
                 }
             }
+        }
+
+        if (inputWeights.Count == 0)
+        {
+            lightTargetGO.SetActive(false);
+            return;
         }
 
         if (inputWeights.Count == 1)
@@ -132,14 +141,14 @@ public class CineLightMixer : PlayableBehaviour {
             isCrossFading = false;
         }
 
-        if(isFading == true)
+        if (isFading == true)
         {
-            DoSingleClip(fromCineLightParameters,fromLightParameters,fromShadowCasterParameters,fadeWeight);
+            DoSingleClip(fromCineLightParameters, fromLightParameters, fromShadowCasterParameters, fadeWeight);
         }
 
-        if(isCrossFading == true)
+        if (isCrossFading == true)
         {
-            DoCrossFadeSettings(fromCineLightParameters,fromLightParameters,fromShadowCasterParameters,toCineLightParameters,toLightParameters,toShadowCasterParameters,crossFadeWeight,cineLight);
+            DoCrossFadeSettings(fromCineLightParameters, fromLightParameters, fromShadowCasterParameters, toCineLightParameters, toLightParameters, toShadowCasterParameters, crossFadeWeight, cineLight);
         }
 
         if (isFading == false && isCrossFading == false)
@@ -152,7 +161,7 @@ public class CineLightMixer : PlayableBehaviour {
         mixedLightParameters.mode = LightmapPresetBakeType.Realtime;
 
         LightingUtilities.ApplyLightParameters(light, mixedLightParameters);
-		CineLightUtilities.ApplyCineLightParameters(cineLight, mixedCineLightParameters);
+        CineLightUtilities.ApplyCineLightParameters(cineLight, mixedCineLightParameters);
 
         if (globalUseShadowCaster && cineLight.shadowCasterGO == null)
         {
@@ -170,7 +179,7 @@ public class CineLightMixer : PlayableBehaviour {
         lightTargetGO.SetActive(mixedLightParameters.intensity == 0 ? false : true);
     }
 
-    private void DoSingleClip(CineLightParameters fromCineLightParameters, LightParameters fromLightParameters, ShadowCasterParameters fromShadowCasterParameters,float weight)
+    private void DoSingleClip(CineLightParameters fromCineLightParameters, LightParameters fromLightParameters, ShadowCasterParameters fromShadowCasterParameters, float weight)
     {
         mixedCineLightParameters = fromCineLightParameters;
         mixedLightParameters = fromLightParameters;
@@ -178,13 +187,13 @@ public class CineLightMixer : PlayableBehaviour {
         mixedLightParameters.intensity = fromLightParameters.intensity * weight;
     }
 
-    private void DoCrossFadeSettings(CineLightParameters fromCineLightParameters, LightParameters fromLightParameters, ShadowCasterParameters fromShadowCasterParameters, CineLightParameters toCineLightParameters, LightParameters toLightParameters, ShadowCasterParameters toShadowCasterParameters,float weight,CineLight cineLight)
+    private void DoCrossFadeSettings(CineLightParameters fromCineLightParameters, LightParameters fromLightParameters, ShadowCasterParameters fromShadowCasterParameters, CineLightParameters toCineLightParameters, LightParameters toLightParameters, ShadowCasterParameters toShadowCasterParameters, float weight, CineLight cineLight)
     {
         //Shortest Path Rotation
-        if(Mathf.Abs(fromCineLightParameters.Yaw - toCineLightParameters.Yaw) > 180)
+        if (Mathf.Abs(fromCineLightParameters.Yaw - toCineLightParameters.Yaw) > 180)
         {
-            if(fromCineLightParameters.Yaw>0)
-                mixedCineLightParameters.Yaw = Mathf.Lerp(fromCineLightParameters.Yaw - 360 , toCineLightParameters.Yaw, weight);
+            if (fromCineLightParameters.Yaw > 0)
+                mixedCineLightParameters.Yaw = Mathf.Lerp(fromCineLightParameters.Yaw - 360, toCineLightParameters.Yaw, weight);
             else
                 mixedCineLightParameters.Yaw = Mathf.Lerp(fromCineLightParameters.Yaw + 360, toCineLightParameters.Yaw, weight);
         }
@@ -240,14 +249,15 @@ public class CineLightMixer : PlayableBehaviour {
             mixedShadowCasterParameters.useShadowCaster = toShadowCasterParameters.useShadowCaster;
             mixedCineLightParameters.drawGizmo = toCineLightParameters.drawGizmo;
             mixedLightParameters.lightCookie = toLightParameters.lightCookie;
-        }            
+        }
     }
 
     //Not sure I want to support blending more than 2 lights
     private void DoLongLoop(CineLight cineLight, Playable handle, int count)
     {
         //Check if this ever happens
-        Debug.Log("Blending more than 2 lights on the timeline");
+        if (Application.isEditor || Debug.isDebugBuild)
+            Debug.Log("Blending between more than 2 Cine lights on the timeline");
 
         for (var i = 0; i < count; i++)
         {
