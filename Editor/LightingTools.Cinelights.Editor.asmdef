@@ -4,7 +4,8 @@
         "LightingTools.Core",
         "LightingTools.Core.Editor",
         "LightingTools.Cinelights",
-        "Unity.RenderPipelines.HighDefinition.Runtime"
+        "Unity.RenderPipelines.HighDefinition.Runtime",
+        "Unity.Timeline.Editor"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
