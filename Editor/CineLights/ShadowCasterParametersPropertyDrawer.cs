@@ -16,13 +16,12 @@ public class ShadowCasterParametersPropertyDrawer : PropertyDrawer
         property.FindPropertyRelative("useShadowCaster").boolValue = LightUIUtilities.DrawHeader("Shadowcaster", property.FindPropertyRelative("useShadowCaster").boolValue);
         EditorGUI.indentLevel++;
 
-        if(property.FindPropertyRelative("useShadowCaster").boolValue)
-        {
-			EditorGUILayout.PropertyField(property.FindPropertyRelative("shadowCasterSize"));
-			EditorGUILayout.PropertyField(property.FindPropertyRelative("shadowCasterDistance"));
-			EditorGUILayout.PropertyField(property.FindPropertyRelative("shadowCasterOffset"));
-           
-        }
+        EditorGUI.BeginDisabledGroup(!property.FindPropertyRelative("useShadowCaster").boolValue);
+		EditorGUILayout.PropertyField(property.FindPropertyRelative("shadowCasterSize"));
+		EditorGUILayout.PropertyField(property.FindPropertyRelative("shadowCasterDistance"));
+		EditorGUILayout.PropertyField(property.FindPropertyRelative("shadowCasterOffset"));
+        EditorGUI.EndDisabledGroup();
+
         EditorGUI.EndProperty();
     }
 }

@@ -57,9 +57,7 @@ namespace LightUtilities
 
             if (attachmentTransform != null)
             {
-                attachmentPosition = attachmentTransform.transform.position;
                 cineLight.SetAttachmentTransform(attachmentTransform, true);
-                lightTargetGO.transform.position = attachmentPosition;
             }
 
             light = cineLight.GetComponentInChildren<Light>();
@@ -117,6 +115,13 @@ namespace LightUtilities
                 }
             }
 
+            if(inputWeights.Count == 0)
+            {
+                lightTargetGO.SetActive(false);
+                return;
+            }
+            lightTargetGO.SetActive(true);
+
             if (inputWeights.Count == 1)
             {
                 isFading = true;
@@ -167,8 +172,6 @@ namespace LightUtilities
                 cineLight.shadowCasterGO.transform.localScale = new Vector3(mixedShadowCasterParameters.shadowCasterSize.x, mixedShadowCasterParameters.shadowCasterSize.y, 1);
                 cineLight.shadowCasterGO.transform.localPosition = new Vector3(mixedShadowCasterParameters.shadowCasterOffset.x, mixedShadowCasterParameters.shadowCasterOffset.y, -mixedShadowCasterParameters.shadowCasterDistance);
             }
-
-            lightTargetGO.SetActive(mixedLightParameters.intensity == 0 ? false : true);
         }
 
         private void DoSingleClip(CineLightParameters fromCineLightParameters, LightParameters fromLightParameters, ShadowCasterParameters fromShadowCasterParameters,float weight)
@@ -181,6 +184,8 @@ namespace LightUtilities
 
         private void DoCrossFadeSettings(CineLightParameters fromCineLightParameters, LightParameters fromLightParameters, ShadowCasterParameters fromShadowCasterParameters, CineLightParameters toCineLightParameters, LightParameters toLightParameters, ShadowCasterParameters toShadowCasterParameters,float weight,CineLight cineLight)
         {
+            mixedCineLightParameters = CineLightUtilities.LerpCineLightParameters(fromCineLightParameters, toCineLightParameters, weight);
+
             //Shortest Path Rotation
             if(Mathf.Abs(fromCineLightParameters.Yaw - toCineLightParameters.Yaw) > 180)
             {
@@ -192,28 +197,31 @@ namespace LightUtilities
             else
                 mixedCineLightParameters.Yaw = Mathf.Lerp(fromCineLightParameters.Yaw, toCineLightParameters.Yaw, weight);
 
-            mixedCineLightParameters.Pitch = Mathf.Lerp(fromCineLightParameters.Pitch, toCineLightParameters.Pitch, weight);
-            mixedCineLightParameters.Roll = Mathf.Lerp(fromCineLightParameters.Roll, toCineLightParameters.Roll, weight);
-            mixedCineLightParameters.distance = Mathf.Lerp(fromCineLightParameters.distance, toCineLightParameters.distance, weight);
-            mixedCineLightParameters.offset = Vector3.Lerp(fromCineLightParameters.offset, toCineLightParameters.offset, weight);
-            mixedCineLightParameters.linkToCameraRotation = toCineLightParameters.linkToCameraRotation;
+            //mixedCineLightParameters.Pitch = Mathf.Lerp(fromCineLightParameters.Pitch, toCineLightParameters.Pitch, weight);
+            //mixedCineLightParameters.Roll = Mathf.Lerp(fromCineLightParameters.Roll, toCineLightParameters.Roll, weight);
+            //mixedCineLightParameters.distance = Mathf.Lerp(fromCineLightParameters.distance, toCineLightParameters.distance, weight);
+            //mixedCineLightParameters.offset = Vector3.Lerp(fromCineLightParameters.offset, toCineLightParameters.offset, weight);
+            //mixedCineLightParameters.linkToCameraRotation = toCineLightParameters.linkToCameraRotation;
 
-            mixedLightParameters.intensity = Mathf.Lerp(fromLightParameters.intensity, toLightParameters.intensity, weight);
-            mixedLightParameters.range = Mathf.Lerp(fromLightParameters.range, toLightParameters.range, weight);
-            mixedLightParameters.colorFilter = Color.Lerp(fromLightParameters.colorFilter, toLightParameters.colorFilter, weight);
-            mixedLightParameters.lightAngle = Mathf.Lerp(fromLightParameters.lightAngle, toLightParameters.lightAngle, weight);
-            mixedLightParameters.normalBias = Mathf.Lerp(fromLightParameters.normalBias, toLightParameters.normalBias, weight);
-            mixedLightParameters.ShadowNearClip = Mathf.Lerp(fromLightParameters.ShadowNearClip, toLightParameters.ShadowNearClip, weight);
-            mixedLightParameters.viewBiasMin = Mathf.Lerp(fromLightParameters.viewBiasMin, toLightParameters.viewBiasMin, weight);
-            mixedLightParameters.viewBiasScale = Mathf.Lerp(fromLightParameters.viewBiasScale, toLightParameters.viewBiasScale, weight);
-            mixedLightParameters.shadowStrength = Mathf.Lerp(fromLightParameters.shadowStrength, toLightParameters.shadowStrength, weight);
-            mixedLightParameters.shadowResolution = (int)Mathf.Lerp(fromLightParameters.shadowResolution, toLightParameters.shadowResolution, weight);
-            mixedLightParameters.innerSpotPercent = Mathf.Lerp(fromLightParameters.innerSpotPercent, toLightParameters.innerSpotPercent, weight);
-            mixedLightParameters.maxSmoothness = Mathf.Lerp(fromLightParameters.maxSmoothness, toLightParameters.maxSmoothness, weight);
+            mixedLightParameters = LightingUtilities.LerpLightParameters(fromLightParameters, toLightParameters, weight);
+
+            //mixedLightParameters.intensity = Mathf.Lerp(fromLightParameters.intensity, toLightParameters.intensity, weight);
+            //mixedLightParameters.range = Mathf.Lerp(fromLightParameters.range, toLightParameters.range, weight);
+            //mixedLightParameters.colorFilter = Color.Lerp(fromLightParameters.colorFilter, toLightParameters.colorFilter, weight);
+            //mixedLightParameters.lightAngle = Mathf.Lerp(fromLightParameters.lightAngle, toLightParameters.lightAngle, weight);
+            //mixedLightParameters.normalBias = Mathf.Lerp(fromLightParameters.normalBias, toLightParameters.normalBias, weight);
+            //mixedLightParameters.ShadowNearClip = Mathf.Lerp(fromLightParameters.ShadowNearClip, toLightParameters.ShadowNearClip, weight);
+            //mixedLightParameters.viewBiasMin = Mathf.Lerp(fromLightParameters.viewBiasMin, toLightParameters.viewBiasMin, weight);
+            //mixedLightParameters.viewBiasScale = Mathf.Lerp(fromLightParameters.viewBiasScale, toLightParameters.viewBiasScale, weight);
+            //mixedLightParameters.shadowStrength = Mathf.Lerp(fromLightParameters.shadowStrength, toLightParameters.shadowStrength, weight);
+            //mixedLightParameters.shadowResolution = (int)Mathf.Lerp(fromLightParameters.shadowResolution, toLightParameters.shadowResolution, weight);
+            //mixedLightParameters.innerSpotPercent = Mathf.Lerp(fromLightParameters.innerSpotPercent, toLightParameters.innerSpotPercent, weight);
+            //mixedLightParameters.maxSmoothness = Mathf.Lerp(fromLightParameters.maxSmoothness, toLightParameters.maxSmoothness, weight);
 
             mixedShadowCasterParameters.shadowCasterDistance = Mathf.Lerp(fromShadowCasterParameters.shadowCasterDistance, toShadowCasterParameters.shadowCasterDistance, weight);
             mixedShadowCasterParameters.shadowCasterOffset = Vector2.Lerp(fromShadowCasterParameters.shadowCasterOffset, toShadowCasterParameters.shadowCasterOffset, weight);
             mixedShadowCasterParameters.shadowCasterSize = Vector2.Lerp(fromShadowCasterParameters.shadowCasterSize, toShadowCasterParameters.shadowCasterSize, weight);
+
 
             //Doesn't interpolate
             if (weight < 0.5f)
@@ -248,7 +256,8 @@ namespace LightUtilities
         private void DoLongLoop(CineLight cineLight, Playable handle, int count)
         {
             //Check if this ever happens
-            Debug.Log("Blending more than 2 lights on the timeline");
+            if(Application.isEditor || Debug.isDebugBuild)
+                Debug.Log("Blending between more than 2 Cine lights on the timeline");
 
             for (var i = 0; i < count; i++)
             {

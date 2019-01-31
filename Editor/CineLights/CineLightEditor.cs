@@ -38,6 +38,7 @@ namespace EditorLightUtilities
         public SerializedProperty color;
         public SerializedProperty intensity;
         public SerializedProperty bounceIntensity;
+        public SerializedProperty emissionRadius;
         public SerializedProperty colorTemperature;
         public SerializedProperty useColorTemperature;
         public SerializedProperty shadowsType;
@@ -56,6 +57,16 @@ namespace EditorLightUtilities
 	    public SerializedProperty affectSpecular;
 	    public SerializedProperty fadeDistance;
 
+        //PCSS
+        public SerializedProperty shadowSoftness;
+        public SerializedProperty blockerSampleCount;
+        public SerializedProperty filterSampleCount;
+        //public SerializedProperty minFilterSize;
+
+        public SerializedProperty useVolumetric;
+        public SerializedProperty volumetricDimmer;
+
+
         public HDAdditionalLightData additionalLightData;
 
 	    //AdditionalShadowSettings
@@ -66,6 +77,7 @@ namespace EditorLightUtilities
         public SerializedProperty viewBiasScale;
         public SerializedProperty normalBiasMin;
         public SerializedProperty normalBiasMax;
+        public SerializedProperty volumetricShadowDimmer;
 
         public SerializedProperty yaw;
         public SerializedProperty pitch;
@@ -135,13 +147,23 @@ namespace EditorLightUtilities
             distance = m_SerializedLightTransform.FindProperty("m_LocalPosition.z");
             lightRotation = m_SerializedLightTransform.FindProperty("m_LocalRotation");
 
+            //Additional light
 		    innerSpotPercent = m_SerializedAdditionalLightData.FindProperty("m_InnerSpotPercent");
 		    maxSmoothness = m_SerializedAdditionalLightData.FindProperty("maxSmoothness");
 		    affectDiffuse = m_SerializedAdditionalLightData.FindProperty("affectDiffuse");
 		    affectSpecular = m_SerializedAdditionalLightData.FindProperty("affectSpecular");
 		    fadeDistance = m_SerializedAdditionalLightData.FindProperty("fadeDistance");
             intensity = m_SerializedAdditionalLightData.FindProperty("punctualIntensity");
+            emissionRadius = m_SerializedAdditionalLightData.FindProperty("shapeRadius");
+            useVolumetric = m_SerializedAdditionalLightData.FindProperty("useVolumetric");
+            volumetricDimmer = m_SerializedAdditionalLightData.FindProperty("m_VolumetricDimmer");
 
+            shadowSoftness = m_SerializedAdditionalLightData.FindProperty("shadowSoftness");
+            blockerSampleCount = m_SerializedAdditionalLightData.FindProperty("blockerSampleCount");
+            filterSampleCount = m_SerializedAdditionalLightData.FindProperty("filterSampleCount");
+            //minFilterSize = m_SerializedAdditionalLightData.FindProperty("minFilterSize");
+
+            //Additional shadow
             shadowResolution = m_SerializedAdditionalShadowData.FindProperty ("shadowResolution");
             shadowFadeDistance = m_SerializedAdditionalShadowData.FindProperty("shadowFadeDistance");
             viewBiasMin = m_SerializedAdditionalShadowData.FindProperty ("viewBiasMin");
@@ -149,6 +171,7 @@ namespace EditorLightUtilities
             normalBiasMin = m_SerializedAdditionalShadowData.FindProperty("normalBiasMin");
             normalBiasMax = m_SerializedAdditionalShadowData.FindProperty("normalBiasMax");
             shadowDimmer = m_SerializedAdditionalShadowData.FindProperty("shadowDimmer");
+            volumetricShadowDimmer = m_SerializedAdditionalShadowData.FindProperty("volumetricShadowDimmer");
 
             InitShadowCasterSerializedObject();
 
@@ -237,12 +260,23 @@ namespace EditorLightUtilities
                     additionalLightData.intensity = intensity.floatValue;
                 }
                 EditorGUILayout.PropertyField(bounceIntensity);
+                EditorGUILayout.PropertyField(emissionRadius);
                 EditorGUILayout.PropertyField(range);
                 EditorGUILayout.PropertyField(lightmapping);
                 EditorGUILayout.PropertyField(cookie);
                 if(cookie.objectReferenceValue != null)
                     EditorGUILayout.PropertyField(cookieSize);
             }
+
+            LightUIUtilities.DrawSplitter();
+            EditorGUI.indentLevel--;
+            useVolumetric.boolValue = LightUIUtilities.DrawHeader("Volumetrics", useVolumetric.boolValue);
+            EditorGUI.indentLevel++;
+
+            EditorGUI.BeginDisabledGroup(!useVolumetric.boolValue);
+            EditorGUILayout.PropertyField(volumetricDimmer);
+            EditorGUILayout.PropertyField(volumetricShadowDimmer);
+            EditorGUI.EndDisabledGroup();
 
             LightUIUtilities.DrawSplitter();
             EditorGUI.indentLevel--;
@@ -263,15 +297,18 @@ namespace EditorLightUtilities
             if(shadowsType.isExpanded)
             {
                 EditorGUILayout.PropertyField(shadowsType);
-                if(shadowsType.enumValueIndex > 0)
-                {
-				    EditorGUILayout.PropertyField (shadowResolution);
-				    EditorGUILayout.PropertyField(shadowsNearPlane);
-                    EditorGUILayout.PropertyField(viewBiasMin);
-                    EditorGUILayout.PropertyField(viewBiasScale);
-                    EditorGUILayout.PropertyField(normalBiasMin);
-                    normalBiasMax = normalBiasMin;
-                }
+                EditorGUI.BeginDisabledGroup(shadowsType.enumValueIndex == 0);
+				EditorGUILayout.PropertyField (shadowResolution);
+				EditorGUILayout.PropertyField(shadowsNearPlane);
+                EditorGUILayout.PropertyField(viewBiasMin);
+                EditorGUILayout.PropertyField(viewBiasScale);
+                EditorGUILayout.PropertyField(normalBiasMin);
+                normalBiasMax = normalBiasMin;
+                EditorGUILayout.LabelField("PCSS", EditorStyles.boldLabel);
+                EditorGUILayout.PropertyField(shadowSoftness);
+                EditorGUILayout.PropertyField(blockerSampleCount);
+                EditorGUILayout.PropertyField(filterSampleCount);
+                EditorGUI.EndDisabledGroup();
             }
 
             LightUIUtilities.DrawSplitter();
@@ -298,41 +335,35 @@ namespace EditorLightUtilities
 			    EditorGUILayout.PropertyField(fadeDistance);
 			    EditorGUILayout.PropertyField(shadowFadeDistance);
 
+                EditorGUILayout.LabelField("Shadow Caster", EditorStyles.boldLabel);
+
                 EditorGUI.BeginChangeCheck();
                 EditorGUILayout.PropertyField(useShadowCaster);
                 if (EditorGUI.EndChangeCheck())
                 {
                     serializedObject.ApplyModifiedProperties();
                     cineLight.ApplyShadowCaster();
-                }
-
-                if (useShadowCaster.boolValue)
-                {
-                    if (m_SerializedShadowCasterTransform == null )
+                    if (m_SerializedShadowCasterTransform == null)
                         InitShadowCasterSerializedObject();
-
-                    EditorGUI.BeginChangeCheck();
-                    EditorGUILayout.LabelField("Shadow Caster", EditorStyles.boldLabel);
-                    if (EditorGUI.EndChangeCheck())
-                    {
-                        serializedObject.ApplyModifiedProperties();
-                        cineLight.ApplyShadowCaster();
+                    if (m_SerializedShadowCasterTransform != null)
                         m_SerializedShadowCasterTransform.ApplyModifiedProperties();
-                    }
-                    EditorGUI.BeginChangeCheck();
-                    EditorGUILayout.PropertyField(shadowsCasterSize);
-                    EditorGUILayout.PropertyField(shadowsCasterDistance);
-                    EditorGUILayout.PropertyField(shadowsCasterOffset);
-                    if (EditorGUI.EndChangeCheck())
+                }
+
+                EditorGUI.BeginDisabledGroup(!useShadowCaster.boolValue);
+                EditorGUI.BeginChangeCheck();
+                EditorGUILayout.PropertyField(shadowsCasterSize);
+                EditorGUILayout.PropertyField(shadowsCasterDistance);
+                EditorGUILayout.PropertyField(shadowsCasterOffset);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    if (cineLight.shadowCasterGO != null)
                     {
-                        if (cineLight.shadowCasterGO != null)
-                        {
-                            m_SerializedShadowCasterTransform.ApplyModifiedProperties();
-                            shadowCasterLocalPosition.vector3Value = new Vector3(shadowsCasterOffset.vector2Value.x, shadowsCasterOffset.vector2Value.y, -shadowsCasterDistance.floatValue);
-                            shadowCasterLocalScale.vector3Value = new Vector3(shadowsCasterSize.vector2Value.x, shadowsCasterSize.vector2Value.y, 1);
-                        }
+                        m_SerializedShadowCasterTransform.ApplyModifiedProperties();
+                        shadowCasterLocalPosition.vector3Value = new Vector3(shadowsCasterOffset.vector2Value.x, shadowsCasterOffset.vector2Value.y, -shadowsCasterDistance.floatValue);
+                        shadowCasterLocalScale.vector3Value = new Vector3(shadowsCasterSize.vector2Value.x, shadowsCasterSize.vector2Value.y, 1);
                     }
                 }
+                EditorGUI.EndDisabledGroup();
             }
 
             serializedObject.ApplyModifiedProperties();

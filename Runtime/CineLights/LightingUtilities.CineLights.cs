@@ -90,7 +90,7 @@ namespace LightUtilities
             light.timelineSelected = parameters.drawGizmo;
         }
 
-        public static CineLightParameters LerpLightTargetParameters(CineLightParameters from, CineLightParameters to, float weight)
+        public static CineLightParameters LerpCineLightParameters(CineLightParameters from, CineLightParameters to, float weight)
         {
             var lerpLightTargetParameters = new CineLightParameters();
 
