@@ -61,7 +61,7 @@ namespace EditorLightUtilities
         public SerializedProperty shadowSoftness;
         public SerializedProperty blockerSampleCount;
         public SerializedProperty filterSampleCount;
-        //public SerializedProperty minFilterSize;
+        public SerializedProperty minFilterSize;
 
         public SerializedProperty useVolumetric;
         public SerializedProperty volumetricDimmer;
@@ -161,7 +161,7 @@ namespace EditorLightUtilities
             shadowSoftness = m_SerializedAdditionalLightData.FindProperty("shadowSoftness");
             blockerSampleCount = m_SerializedAdditionalLightData.FindProperty("blockerSampleCount");
             filterSampleCount = m_SerializedAdditionalLightData.FindProperty("filterSampleCount");
-            //minFilterSize = m_SerializedAdditionalLightData.FindProperty("minFilterSize");
+            minFilterSize = m_SerializedAdditionalLightData.FindProperty("minFilterSize");
 
             //Additional shadow
             shadowResolution = m_SerializedAdditionalShadowData.FindProperty ("shadowResolution");
@@ -308,6 +308,7 @@ namespace EditorLightUtilities
                 EditorGUILayout.PropertyField(shadowSoftness);
                 EditorGUILayout.PropertyField(blockerSampleCount);
                 EditorGUILayout.PropertyField(filterSampleCount);
+                EditorGUILayout.PropertyField(minFilterSize);
                 EditorGUI.EndDisabledGroup();
             }
 
