@@ -392,9 +392,19 @@ namespace EditorLightUtilities
                 //Target
                 LightingGizmos.DrawCross(scr.LightParentYaw.transform);
 
-                if (scr.lightGO.GetComponent<Light>().type != LightType.Spot)
-                    return;
-                LightingGizmos.DrawSpotlightGizmo(scr.lightGO.GetComponent<Light>());
+                Light light = scr.lightGO.GetComponent<Light>();
+                HDAdditionalLightData data = light.GetComponent<HDAdditionalLightData>();
+
+
+                if (light.type == LightType.Spot)
+                    LightingGizmos.DrawSpotlightGizmo(light);
+                if (light.type == LightType.Point && data.lightTypeExtent == LightTypeExtent.Punctual)
+                    LightingGizmos.DrawCross(light.transform);
+                if (light.type == LightType.Directional)
+                    LightingGizmos.DrawDirectionalLightGizmo(light.transform);
+                if (light.type == LightType.Point && data.lightTypeExtent == LightTypeExtent.Rectangle )
+                    LightingGizmos.DrawRectangleGizmo(light.gameObject,data.shapeWidth, data.shapeHeight);
+
             }
         }
     }
