@@ -197,59 +197,25 @@ namespace LightUtilities
             else
                 mixedCineLightParameters.Yaw = Mathf.Lerp(fromCineLightParameters.Yaw, toCineLightParameters.Yaw, weight);
 
-            //mixedCineLightParameters.Pitch = Mathf.Lerp(fromCineLightParameters.Pitch, toCineLightParameters.Pitch, weight);
-            //mixedCineLightParameters.Roll = Mathf.Lerp(fromCineLightParameters.Roll, toCineLightParameters.Roll, weight);
-            //mixedCineLightParameters.distance = Mathf.Lerp(fromCineLightParameters.distance, toCineLightParameters.distance, weight);
-            //mixedCineLightParameters.offset = Vector3.Lerp(fromCineLightParameters.offset, toCineLightParameters.offset, weight);
-            //mixedCineLightParameters.linkToCameraRotation = toCineLightParameters.linkToCameraRotation;
-
             mixedLightParameters = LightingUtilities.LerpLightParameters(fromLightParameters, toLightParameters, weight);
-
-            //mixedLightParameters.intensity = Mathf.Lerp(fromLightParameters.intensity, toLightParameters.intensity, weight);
-            //mixedLightParameters.range = Mathf.Lerp(fromLightParameters.range, toLightParameters.range, weight);
-            //mixedLightParameters.colorFilter = Color.Lerp(fromLightParameters.colorFilter, toLightParameters.colorFilter, weight);
-            //mixedLightParameters.lightAngle = Mathf.Lerp(fromLightParameters.lightAngle, toLightParameters.lightAngle, weight);
-            //mixedLightParameters.normalBias = Mathf.Lerp(fromLightParameters.normalBias, toLightParameters.normalBias, weight);
-            //mixedLightParameters.ShadowNearClip = Mathf.Lerp(fromLightParameters.ShadowNearClip, toLightParameters.ShadowNearClip, weight);
-            //mixedLightParameters.viewBiasMin = Mathf.Lerp(fromLightParameters.viewBiasMin, toLightParameters.viewBiasMin, weight);
-            //mixedLightParameters.viewBiasScale = Mathf.Lerp(fromLightParameters.viewBiasScale, toLightParameters.viewBiasScale, weight);
-            //mixedLightParameters.shadowStrength = Mathf.Lerp(fromLightParameters.shadowStrength, toLightParameters.shadowStrength, weight);
-            //mixedLightParameters.shadowResolution = (int)Mathf.Lerp(fromLightParameters.shadowResolution, toLightParameters.shadowResolution, weight);
-            //mixedLightParameters.innerSpotPercent = Mathf.Lerp(fromLightParameters.innerSpotPercent, toLightParameters.innerSpotPercent, weight);
-            //mixedLightParameters.maxSmoothness = Mathf.Lerp(fromLightParameters.maxSmoothness, toLightParameters.maxSmoothness, weight);
 
             mixedShadowCasterParameters.shadowCasterDistance = Mathf.Lerp(fromShadowCasterParameters.shadowCasterDistance, toShadowCasterParameters.shadowCasterDistance, weight);
             mixedShadowCasterParameters.shadowCasterOffset = Vector2.Lerp(fromShadowCasterParameters.shadowCasterOffset, toShadowCasterParameters.shadowCasterOffset, weight);
             mixedShadowCasterParameters.shadowCasterSize = Vector2.Lerp(fromShadowCasterParameters.shadowCasterSize, toShadowCasterParameters.shadowCasterSize, weight);
-
-
+            
             //Doesn't interpolate
             if (weight < 0.5f)
             {
                 cineLight.drawGizmo = fromCineLightParameters.drawGizmo;
-                mixedLightParameters.type = fromLightParameters.type;
-                mixedLightParameters.shadows = fromLightParameters.shadows;
-                mixedLightParameters.affectDiffuse = fromLightParameters.affectDiffuse;
-                mixedLightParameters.affectSpecular = fromLightParameters.affectSpecular;
-                mixedLightParameters.cullingMask = fromLightParameters.cullingMask;
-                mixedLightParameters.shadowQuality = fromLightParameters.shadowQuality;
                 mixedShadowCasterParameters.useShadowCaster = fromShadowCasterParameters.useShadowCaster;
                 mixedCineLightParameters.drawGizmo = fromCineLightParameters.drawGizmo;
-                mixedLightParameters.lightCookie = fromLightParameters.lightCookie;
             }
             if (weight > 0.5f)
             {
                 cineLight.drawGizmo = toCineLightParameters.drawGizmo;
-                mixedLightParameters.type = toLightParameters.type;
-                mixedLightParameters.shadows = toLightParameters.shadows;
-                mixedLightParameters.affectDiffuse = toLightParameters.affectDiffuse;
-                mixedLightParameters.affectSpecular = toLightParameters.affectSpecular;
-                mixedLightParameters.cullingMask = toLightParameters.cullingMask;
-                mixedLightParameters.shadowQuality = toLightParameters.shadowQuality;
                 mixedShadowCasterParameters.useShadowCaster = toShadowCasterParameters.useShadowCaster;
                 mixedCineLightParameters.drawGizmo = toCineLightParameters.drawGizmo;
-                mixedLightParameters.lightCookie = toLightParameters.lightCookie;
-            }            
+            }
         }
 
         //Not sure I want to support blending more than 2 lights
