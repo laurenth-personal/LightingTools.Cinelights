@@ -21,10 +21,7 @@ public class CineLightParametersPropertyDrawer : PropertyDrawer
         EditorGUILayout.PropertyField(property.FindPropertyRelative("linkToCameraRotation"));
         EditorGUILayout.PropertyField(property.FindPropertyRelative("Yaw"));
         EditorGUILayout.PropertyField(property.FindPropertyRelative("Pitch"));
-        if (property.serializedObject.FindProperty("lightCookie") != null && property.serializedObject.FindProperty("lightCookie").objectReferenceValue != null)
-        {
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("Roll"));
-        }
+        EditorGUILayout.PropertyField(property.FindPropertyRelative("Roll"));
         EditorGUILayout.PropertyField(property.FindPropertyRelative("distance"));
         EditorGUILayout.PropertyField(property.FindPropertyRelative("offset"));
 
