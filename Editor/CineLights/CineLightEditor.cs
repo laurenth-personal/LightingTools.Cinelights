@@ -240,6 +240,16 @@ namespace EditorLightUtilities
                 EditorGUILayout.PropertyField(lightParentYawLocalPosition, new GUIContent("Offset"));
             }
 
+            LightUIUtilities.DrawSplitter();
+            EditorGUI.indentLevel--;
+            spotAngle.isExpanded = LightUIUtilities.DrawHeaderFoldout("Shape", spotAngle.isExpanded);
+            EditorGUI.indentLevel++;
+            if (spotAngle.isExpanded)
+            {
+                EditorGUILayout.Slider(spotAngle, 0, 180);
+                EditorGUILayout.Slider(innerSpotPercent, 0, 100);
+                EditorGUILayout.Slider(maxSmoothness, 0, 1);
+            }
 
             LightUIUtilities.DrawSplitter();
             EditorGUI.indentLevel--;
@@ -277,17 +287,6 @@ namespace EditorLightUtilities
             EditorGUILayout.PropertyField(volumetricDimmer);
             EditorGUILayout.PropertyField(volumetricShadowDimmer);
             EditorGUI.EndDisabledGroup();
-
-            LightUIUtilities.DrawSplitter();
-            EditorGUI.indentLevel--;
-            spotAngle.isExpanded = LightUIUtilities.DrawHeaderFoldout("Shape",spotAngle.isExpanded);
-            EditorGUI.indentLevel++;
-            if(spotAngle.isExpanded)
-		    {
-                EditorGUILayout.Slider(spotAngle,0,180);
-			    EditorGUILayout.Slider (innerSpotPercent, 0, 100);
-			    EditorGUILayout.Slider (maxSmoothness, 0, 1);
-		    }
 
             LightUIUtilities.DrawSplitter();
             EditorGUI.indentLevel--;
@@ -390,12 +389,11 @@ namespace EditorLightUtilities
 
             if (scr.LightParentYaw != null && scr.drawGizmo)
             {
+                //Target
                 LightingGizmos.DrawCross(scr.LightParentYaw.transform);
+
                 if (scr.lightGO.GetComponent<Light>().type != LightType.Spot)
-                {
-                    Debug.Log("light is not a spotlight");
                     return;
-                }
                 LightingGizmos.DrawSpotlightGizmo(scr.lightGO.GetComponent<Light>());
             }
         }
