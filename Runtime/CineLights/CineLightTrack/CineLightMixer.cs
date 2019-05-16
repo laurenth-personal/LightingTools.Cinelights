@@ -20,8 +20,8 @@ namespace LightUtilities
         private bool globalUseShadowCaster = false;
         public Vector3 attachmentPosition;
 
-        LightParameters neutralLightParameters = new LightParameters(LightType.Spot, LightmapPresetBakeType.Realtime, true);
-        LightParameters mixedLightParameters = new LightParameters(LightType.Spot, LightmapPresetBakeType.Realtime, true);
+        LightParameters neutralLightParameters = new LightParameters(LightShape.Spot, LightmapPresetBakeType.Realtime, true);
+        LightParameters mixedLightParameters = new LightParameters(LightShape.Spot, LightmapPresetBakeType.Realtime, true);
 
         CineLightParameters neutralCineLightParameters = new CineLightParameters(true);
         CineLightParameters mixedCineLightParameters = new CineLightParameters(true);

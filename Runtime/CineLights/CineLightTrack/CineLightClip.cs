@@ -10,7 +10,7 @@ public class CineLightClipPlayable : PlayableBehaviour
     [SerializeField]
     public CineLightParameters cinelightParameters;
     [SerializeField]
-    public LightParameters lightParameters = new LightParameters(LightType.Spot,LightmapPresetBakeType.Realtime );
+    public LightParameters lightParameters = new LightParameters(LightShape.Spot,LightmapPresetBakeType.Realtime );
     [SerializeField]
     public ShadowCasterParameters shadowCasterParameters;
 }
